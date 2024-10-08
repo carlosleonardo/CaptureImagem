@@ -1,0 +1,32 @@
+@page "/video-player"
+@inject IJSRuntime JSRuntime
+
+<div class="container">
+	<video src="@urlVideo" width="640" height="360" controls id="videoPlayer">
+		Seu browser não suporta a tag video
+	</video>
+	<InputFile class="mt-3" OnChange="OnChange" accept="video/*" />
+	<button class="btn btn-primary mt-3" @onclick="OnClick">Capturar Imagem</button>
+	@if (!string.IsNullOrEmpty(urlImagem))
+	{
+		<img src="@urlImagem" style="width: 320px; height: auto;" class="mt-3" />
+	}
+</div>
+
+@code {
+	private string? urlVideo = null;
+	private string? urlImagem = null;
+
+	private async Task OnChange(InputFileChangeEventArgs e)
+	{
+		var arquivo = e.File;
+		var buffer = new byte[arquivo.Size];
+		await arquivo.OpenReadStream(1024 * 1024 * 300).ReadAsync(buffer);
+		urlVideo = $"data:video/mp4;base64,{Convert.ToBase64String(buffer)}";
+
+	}
+	private async Task OnClick()
+	{
+		urlImagem = await JSRuntime.InvokeAsync<string>("captureImage", "videoPlayer");
+	}
+}
