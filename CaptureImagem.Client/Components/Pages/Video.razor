@@ -1,0 +1,11 @@
+@page "/video"
+
+<div class="container">
+	<video src="@urlVideo" width="640" height="360" controls>
+		Seu browser não suporta a tag video
+	</video>
+</div>
+
+@code {
+	private string urlVideo = "";
+}
